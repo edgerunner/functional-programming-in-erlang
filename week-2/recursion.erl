@@ -8,10 +8,11 @@ factorial(N) when N > 0 -> factorial(N, 1).
 factorial(1, P) -> P;
 factorial(N, P) -> factorial(N - 1, P * N).
 
-fibonacci(0) -> 1;
-fibonacci(1) -> 1;
-fibonacci(N) when N > 1 ->
-    fibonacci(N - 1) + fibonacci(N - 2).
+fibonacci(N) -> fibonacci(N, 0, 1).
+
+fibonacci(0, _A, B) -> B;
+fibonacci(N, A, B) when N > 0 ->
+    fibonacci(N - 1, B, A + B).
 
 pieces(N) -> hyper_pieces(2, N).
 
@@ -26,6 +27,8 @@ test_fibonacci() ->
     1 = fibonacci(1),
     5 = fibonacci(4),
     13 = fibonacci(6),
+    55 = fibonacci(9),
+    573147844013817084101 = fibonacci(100),
     ok.
 
 test_factorial() ->
