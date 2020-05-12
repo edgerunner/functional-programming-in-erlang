@@ -1,7 +1,12 @@
 -module(recursion).
 
--export([fibonacci/1, hyper_pieces/2, pieces/1,
-	 test/0]).
+-export([factorial/1, fibonacci/1, hyper_pieces/2,
+	 pieces/1, test/0]).
+
+factorial(N) when N > 0 -> factorial(N, 1).
+
+factorial(1, P) -> P;
+factorial(N, P) -> factorial(N - 1, P * N).
 
 fibonacci(0) -> 1;
 fibonacci(1) -> 1;
@@ -23,6 +28,13 @@ test_fibonacci() ->
     13 = fibonacci(6),
     ok.
 
+test_factorial() ->
+    1 = factorial(1),
+    6 = factorial(3),
+    120 = factorial(5),
+    5040 = factorial(7),
+    ok.
+
 test_pieces() ->
     {'EXIT', {function_clause, _}} = (catch pieces(-3)),
     1 = pieces(0),
@@ -41,6 +53,7 @@ test_hyper_pieces() ->
     ok.
 
 test() ->
+    ok = test_factorial(),
     ok = test_fibonacci(),
     ok = test_pieces(),
     ok = test_hyper_pieces(),
