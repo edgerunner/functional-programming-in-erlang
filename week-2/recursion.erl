@@ -17,10 +17,14 @@ fibonacci(N, A, B) when N > 0 ->
 pieces(N) -> hyper_pieces(2, N).
 
 %% D: number of dimensions, N: number of cuts
-hyper_pieces(_, 0) -> 1;
-hyper_pieces(1, N) when N > 0 -> N + 1;
-hyper_pieces(D, N) when (D > 1) and (N > 0) ->
-    hyper_pieces(D, N - 1) + hyper_pieces(D - 1, N - 1).
+hyper_pieces(D, N) when D > 0, N >= 0 ->
+    hyper_pieces(N, 0, lists:duplicate(D + 1, 1)).
+
+hyper_pieces(N, N, List) -> lists:last(List);
+hyper_pieces(N, C, West) ->
+    Northwest = lists:droplast([0 | West]),
+    East = lists:zipwith(fun erlang:'+'/2, West, Northwest),
+    hyper_pieces(N, C + 1, East).
 
 test_fibonacci() ->
     {'EXIT', {function_clause, _}} = (catch fibonacci(-3)),
@@ -46,6 +50,7 @@ test_pieces() ->
     7 = pieces(3),
     11 = pieces(4),
     16 = pieces(5),
+    500501 = pieces(1000),
     ok.
 
 test_hyper_pieces() ->
@@ -53,6 +58,7 @@ test_hyper_pieces() ->
     11 = hyper_pieces(2, 4),
     15 = hyper_pieces(3, 4),
     16 = hyper_pieces(4, 4),
+    166667501 = hyper_pieces(3, 1000),
     ok.
 
 test() ->
