@@ -14,15 +14,11 @@ max([N]) -> N;
 max([N1, N2 | Ns]) when N1 < N2 -> max([N2 | Ns]);
 max([N1, _N2 | Ns]) -> max([N1 | Ns]).
 
-% direct recursion is simpler when the output is a list
-% and the order is important.
+% list comprehensions transform lists in a concise manner.
 
-double([]) -> [];
-double([N | Ns]) -> [2 * N | double(Ns)].
+double(Ns) -> [2 * N || N <- Ns].
 
-evens([]) -> [];
-evens([N | Ns]) when N rem 2 == 0 -> [N | evens(Ns)];
-evens([_N | Ns]) -> evens(Ns).
+evens(Ns) -> [N || N <- Ns, N rem 2 == 0].
 
 test_product() ->
     6 = product([1, 2, 3]), 28 = product([2, 7, 2]), ok.
