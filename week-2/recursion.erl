@@ -1,7 +1,7 @@
 -module(recursion).
 
 -export([factorial/1, fibonacci/1, hyper_pieces/2,
-	 pieces/1, test/0]).
+	 perfect/1, pieces/1, test/0]).
 
 factorial(N) when N > 0 -> factorial(N, 1).
 
@@ -25,6 +25,19 @@ hyper_pieces(N, C, West) ->
     Northwest = lists:droplast([0 | West]),
     East = lists:zipwith(fun erlang:'+'/2, West, Northwest),
     hyper_pieces(N, C + 1, East).
+
+perfect(Number) -> perfect(Number, 2, 1).
+
+perfect(Number, _, Number) -> true;
+perfect(Number, Divisor, Sum)
+    when Sum > Number; Divisor > Number ->
+    false;
+perfect(Number, Divisor, Sum)
+    when 0 == Number rem Divisor ->
+    perfect(Number, Divisor + 1,
+	    Sum + Divisor + Number div Divisor);
+perfect(Number, Divisor, Sum) ->
+    perfect(Number, Divisor + 1, Sum).
 
 test_fibonacci() ->
     {'EXIT', {function_clause, _}} = (catch fibonacci(-3)),
@@ -61,9 +74,17 @@ test_hyper_pieces() ->
     166667501 = hyper_pieces(3, 1000),
     ok.
 
+test_perfect() ->
+    true = perfect(6),
+    true = perfect(28),
+    false = perfect(10),
+    false = perfect(25),
+    ok.
+
 test() ->
     ok = test_factorial(),
     ok = test_fibonacci(),
     ok = test_pieces(),
     ok = test_hyper_pieces(),
+    ok = test_perfect(),
     ok.
