@@ -1,7 +1,7 @@
 -module(list).
 
--export([double/1, evens/1, max/1, nub/1, product/1,
-	 take/2, test/0]).
+-export([double/1, evens/1, max/1, nub/1, palindrome/1,
+	 product/1, take/2, test/0]).
 
 % when you have a linked list that needs to be folded/reduced to
 % the same type as its contents with a commutative operation,
@@ -34,6 +34,19 @@ nub([X | Xs], Nubs) ->
       false -> nub(Xs, [X | Nubs])
     end.
 
+palindrome(Str) ->
+    Lower = string:lowercase(Str),
+    Clean = lists:filter(fun (Char)
+				 when Char >= $a, Char =< $z ->
+				 true;
+			     (_) -> false
+			 end,
+			 Lower),
+    Reverse = lists:reverse(Clean),
+    Zipped = lists:zipwith(fun erlang:'=='/2, Reverse,
+			   Clean),
+    lists:foldl(fun erlang:'and'/2, true, Zipped).
+
 % TESTS
 
 test_product() ->
@@ -64,6 +77,14 @@ test_nub() ->
     [2, 4, 1, 3] = nub([2, 4, 1, 3, 3, 1]),
     ok.
 
+test_palindrome() ->
+    true = palindrome([]),
+    true = palindrome("madam"),
+    true = palindrome("Madam I'm Adam"),
+    false = palindrome("adam"),
+    false = palindrome("Madam I'm mad"),
+    ok.
+
 test() ->
     ok = test_product(),
     ok = test_max(),
@@ -71,4 +92,5 @@ test() ->
     ok = test_evens(),
     ok = test_take(),
     ok = test_nub(),
+    ok = test_palindrome(),
     ok.
